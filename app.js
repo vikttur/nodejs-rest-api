@@ -1,11 +1,9 @@
 const express = require('express')
-const logger = require('morgan')
+const logger = require('morgan') // при розробці в консоль інформація про запити 
 const cors = require('cors')
 
 const contactsRouter = require('./routes/api/contacts')
-
 const app = express()
-
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short'
 
 app.use(logger(formatsLogger))

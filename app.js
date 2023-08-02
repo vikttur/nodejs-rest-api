@@ -1,8 +1,8 @@
 const express = require('express')
-const logger = require('morgan') // при розробці в консоль інформація про запити 
+const logger = require('morgan') 
 const cors = require('cors')
-
 const contactsRouter = require('./routes/api/contacts')
+
 const app = express()
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short'
 
@@ -16,8 +16,9 @@ app.use((req, res) => {
   res.status(404).json({ message: 'Not found' })
 })
 
-app.use((err, req, res, next) => {
-  res.status(500).json({ message: err.message })
+app.use((err, reg, res, next) => {
+	const { status = 500, message = 'Server error' } = err;
+	res.status(status).json({ message: message,	})
 })
 
 module.exports = app

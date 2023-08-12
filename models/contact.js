@@ -2,23 +2,20 @@ const Joi = require('joi');
 const { Schema, model } = require('mongoose');
 const { mongooseErrorStatus } = require('../utils');
 
-const regexpEmail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
-const regexpPhone = /^\(\d{3}\)\s\d{3}-\d{4}$/ //(000) 000-0000
-
 const contactSchema = new Schema({
 	name: {
 		type: String,
-		required: true,
+		required: [true, 'Set name for contact'],
 	},
 	email: {
 		type: String,
 		required: true,
-		match: regexpEmail,
+		match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
 	},
 	phone: {
 		type: String,
 		required: true,
-		match: regexpPhone,
+		match: /^\(\d{3}\)\s\d{3}-\d{4}$/, 
 	},
 	favorite: {
 		type: Boolean,
@@ -44,9 +41,14 @@ const putSchema = Joi.object({
 	favorite: Joi.bool(),
 })
 
+const patchSchema = Joi.object({
+	favorite: Joi.bool().required(),
+})
+
 const schemas = {
 	postSchema,
 	putSchema,
+	patchSchema,
 }
 
 module.exports = {

@@ -1,18 +1,7 @@
-const Joi = require('joi');
 const { Contact } = require('../models/contact');
 const { HttpError, ctrlWrap } = require('../utils');
+const { schemas } = require('../models/contact');
 
-const postSchema = Joi.object({
-	name: Joi.string().required(),
-	email: Joi.string().required(),
-	phone: Joi.string().required(),
-})
-
-const putSchema = Joi.object({
-	name: Joi.string(),
-	email: Joi.string(),
-	phone: Joi.string(),
-})
 
 const getAll = async (req, res) => {
 	const listContacts = await Contact.find();
@@ -27,16 +16,16 @@ const getAll = async (req, res) => {
 // 		res.json(getContact);
 // }
 
-// const postAdd = async (req, res) => {
-// 	const { error } = postSchema.validate(req.body);
-// 	if (error) throw HttpError(400, "missing required name field");
+const postAdd = async (req, res) => {
+	const { error } = schemas.postSchema.validate(req.body);
+	if (error) throw HttpError(400, "missing required name field");
 
-// 	const addContact = await contacts.addContact(req.body);
-// 	res.status(201).json(addContact);
-// }
+	const addContact = await Contact.create(req.body);
+	res.status(201).json(addContact);
+}
 
 // const updateById = async (req, res) => {
-// 	const { error } = putSchema.validate(req.body);
+// 	const { error } = schemas.putSchema.validate(req.body);
 // 	if (error) throw HttpError(400, 'missing fields');
 
 // 	const { id } = req.params;
@@ -55,7 +44,7 @@ const getAll = async (req, res) => {
 module.exports = {
 	getAll: ctrlWrap(getAll),
 	// getById: ctrlWrap(getById),
-	// postAdd: ctrlWrap(postAdd),
+	postAdd: ctrlWrap(postAdd),
 	// updateById: ctrlWrap(updateById),
 	// deleteById: ctrlWrap(deleteById), 
 }

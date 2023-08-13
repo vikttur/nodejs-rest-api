@@ -1,3 +1,7 @@
+mongodb:
+viktor
+Lc74lMFJekcvbyrK
+
 ## GoIT Node.js Course Template Homework
 
 Виконайте форк цього репозиторію для виконання домашніх завдань (2-6)

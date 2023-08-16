@@ -4,6 +4,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 dotenv.config();
 
+const aythRouter = require('./routes/api/auth');
 const contactsRouter = require('./routes/api/contacts');
 
 const app = express();
@@ -13,6 +14,7 @@ app.use(logger(formatsLogger))
 app.use(cors())
 app.use(express.json())
 
+app.use('/api/auth', aythRouter)
 app.use('/api/contacts', contactsRouter)
 
 app.use((req, res) => {

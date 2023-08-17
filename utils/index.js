@@ -3,7 +3,7 @@ const { HttpError } = require('./HttpError');
 const { ctrlWrap } = require('./ctrlWrap');
 const { isValidId } = require('./isValidId');
 const { mongooseErrorStatus } = require('./mongooseErrorStatus');
-const { authenticate } = require('./authenticate');
+// const { authenticate } = require('./authenticate');
 
 module.exports = {
 	EMAIL_REGEXP,
@@ -12,5 +12,5 @@ module.exports = {
 	ctrlWrap,
 	isValidId,
 	mongooseErrorStatus,
-	authenticate,
+	// authenticate,
 }

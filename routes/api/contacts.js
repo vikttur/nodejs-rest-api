@@ -1,7 +1,7 @@
 const express = require('express');
 const ctrlContacts = require('../../controllers/contacts');
-const { isValidId, authenticate } = require('../../utils');
-
+const { isValidId } = require('../../utils');
+const { authenticate } = require('../../utils/authenticate');
 const router = express.Router();
 
 router.get('/', authenticate, ctrlContacts.getAll)

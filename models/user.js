@@ -11,12 +11,12 @@ const userSchema = new Schema({
 		type: String,
 		unique: true,
 		match: EMAIL_REGEXP,
-		required: true,
+		required: [true, 'Email is required'],
 	},
 	password: {
 		type: String,
 		minlength: 8,
-		required: true,
+		required: [true, 'Set password for user']
 	},
 }, { versionKey: false, timestamps: true });
 

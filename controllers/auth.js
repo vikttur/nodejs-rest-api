@@ -1,11 +1,14 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { User } = require('../models/user');
-const { HttpError, ctrlWrap } = require('../utils');
+const { User, schemas} = require('../models/user');
+const { SUBSCRIPTIONS, HttpError, ctrlWrap } = require('../utils');
 
 const { SECRET_KEY } = process.env;
 
 const register = async (req, res) => {
+	const { error } = schemas.signapSchema.validate(req.body);
+	if (error) throw HttpError(400, 'Error from Joi or other validation library');
+
 	const { email, password } = req.body;
 	const user = await User.findOne({ email });
 	if (user) throw HttpError(409, 'Email is already in use');
@@ -22,9 +25,12 @@ const register = async (req, res) => {
 }
 
 const login = async (req, res) => {
+	const { error } = schemas.signapSchema.validate(req.body);
+	if (error) throw HttpError(400, 'Error from Joi or other validation library');
+
 	const { email, password } = req.body;
 	const user = await User.findOne({ email });
-	if (!user) throw HttpError(401, 'Email or password invalid');
+	if (!user) throw HttpError(401, 'Email or password is wrong');
 
 	const passwordCompare = await bcrypt.compare(password, user.password);
 	if (!passwordCompare) throw HttpError(401, 'Email or password is wrong');
@@ -46,23 +52,35 @@ const login = async (req, res) => {
 }
 
 const current = async (req, res) => {
-	const { name, email } = req.body;
+	const { email, subscription } = req.user;
 
 	res.json({
-		name,
 		email,
+		subscription,
 	})
 }
 
 const logout = async (req, res) => {
 	const { _id } = req.user;
-	console.log(_id);
 	await User.findByIdAndUpdate(_id, { token: '' });
 
-	const { status, message } = next(HttpError(204));
 	res.json({
-		// message: 'Logout success'
-		message: status,
+		'message': 'No Content',
+	})
+}
+
+const updateSubscription = async (req, res) => {
+	const { _id, email } = req.user;
+	const subscription = req.body.subscription;
+
+	if (!subscription) throw HttpError(404, 'No subscription to update');
+	if (!SUBSCRIPTIONS.includes(subscription)) throw HttpError(404, 'Invalid subscription');
+
+	await User.findByIdAndUpdate(_id, { subscription: subscription });
+
+	res.json({
+		email,
+		subscription,
 	})
 }
 
@@ -71,4 +89,5 @@ module.exports = {
 	login: ctrlWrap(login),
 	current: ctrlWrap(current),
 	logout: ctrlWrap(logout),
+	updateSubscription: ctrlWrap(updateSubscription),
 }

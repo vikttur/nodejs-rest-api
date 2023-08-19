@@ -3,19 +3,19 @@ const { HttpError, ctrlWrap } = require('../utils');
 const { schemas } = require('../models/contact');
 
 const getAll = async (req, res) => {
-	const { _id: owner } = req.user;
-	// const { page = 1, limit = 20 } = req.query;
-	// const skip = (page - 1) * limit;
+	const { _id: owner } = req.user; 
+	const { page = 1, limit = 20, ...filters } = req.query;
+	const skip = (page - 1) * limit;
 
-	const listContacts = await Contact.find({ owner }, '-owner - token -createdAt -updatedAt'); //, { skip, limit }).populate('owner', 'favorite');
+	const listContacts = await Contact.find({ owner, ...filters }, '-owner -token -createdAt -updatedAt', { skip, limit });
 	res.json(listContacts);
 }
 
 const getById = async (req, res) => {
 	const { id } = req.params;
-	const getContact = await Contact.findById(id);
+	const getContact = await Contact.findById(id, '-owner -token -createdAt -updatedAt');
 
-	if (!getContact) throw HttpError(404); //, 'Not found');
+	if (!getContact) throw HttpError(404);
 		res.json(getContact);
 }
 
@@ -34,7 +34,7 @@ const updateById = async (req, res) => {
 
 	const { id } = req.params;
 	const updateContact = await Contact.findByIdAndUpdate(id, req.body, {now: true});
-	if (!updateContact) throw HttpError(404); //, 'Not found');
+	if (!updateContact) throw HttpError(404);
 	res.json(updateContact);
 }
 
@@ -44,14 +44,14 @@ const updateStatusContact = async (req, res) => {
 
 	const { id } = req.params;
 	const updateContact = await Contact.findByIdAndUpdate(id, req.body, {now: true});
-	if (!updateContact) throw HttpError(404); //, 'Not found');
+	if (!updateContact) throw HttpError(404);
 	res.json(updateContact);
 }
 
 const deleteById = async (req, res) => {
 	const { id } = req.params;
 	const deletedContact = await Contact.findByIdAndDelete(id);
-	if (!deletedContact) throw HttpError(404); //, 'Not found');
+	if (!deletedContact) throw HttpError(404);
 	res.json({ "message": "contact deleted" });
 }
 	

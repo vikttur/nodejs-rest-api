@@ -1,6 +1,6 @@
 const Joi = require('joi');
 const { Schema, model } = require('mongoose');
-const { EMAIL_REGEXP, mongooseErrorStatus } = require('../utils');
+const { EMAIL_REGEXP, SUBSCRIPTIONS, mongooseErrorStatus } = require('../utils');
 
 const userSchema = new Schema({
 	email: {
@@ -17,7 +17,7 @@ const userSchema = new Schema({
 	subscription: {
 		type: String,
 		default: 'starter',
-    enum: ['starter', 'pro', 'business'], 
+    enum: SUBSCRIPTIONS, 
   },
 	token: {
 		type: String,
@@ -29,28 +29,16 @@ userSchema.post('save', mongooseErrorStatus);
 
 const User = model('user', userSchema);
 
-// const registerSchema = Joi.object({
-// 	email: Joi.string().pattern(EMAIL_REGEXP).required(),
-// 	password: Joi.string().min(8).required(),
-// })
-
-// const loginSchema = Joi.object({
-// 	email: Joi.string().pattern(EMAIL_REGEXP).required(),
-// 	password: Joi.string().min(8).required(),
-// })
-
-// const schemas = {
-// 	registerSchema,
-// 	loginSchema,
-// }
-
 const signapSchema = Joi.object({
 	email: Joi.string().pattern(EMAIL_REGEXP).required(),
 	password: Joi.string().min(8).required(),
 })
 
+const schemas = {
+	signapSchema,
+}
+
 module.exports = {
 	User,
-	// schemas,
-	signapSchema,
+	schemas,
 }

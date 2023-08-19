@@ -8,6 +8,7 @@ router.post('/register', ctrlUsers.register);
 router.post('/login', ctrlUsers.login);
 router.get('/current', authenticate, ctrlUsers.current);
 router.post('/logout', authenticate, ctrlUsers.logout);
+router.patch('/subscription', authenticate, ctrlUsers.updateSubscription);
 
 module.exports = router
 

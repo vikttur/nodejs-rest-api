@@ -11,13 +11,13 @@ const authenticate = async (req, res, next) => {
 
 	try {
 		const { id } = jwt.verify(token, SECRET_KEY);
+		// console.log(id);
 		const user = await User.findById(id);
-		console.log(user);
-		console.log(user.token);
-		console.log(token);
+		// console.log(user);
 		if (!user || !user.token || user.token !== token) next(HttpError(401));
 
 		req.user = user;
+		// console.log(req.user._id);
 		next();
 	} 
 	catch {

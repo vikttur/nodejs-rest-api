@@ -1,10 +1,11 @@
-const { EMAIL_REGEXP, PHONE_REGEXP } = require('./constants');
+const { EMAIL_REGEXP, PHONE_REGEXP, SUBSCRIPTIONS } = require('./constants');
 const { HttpError } = require('./HttpError');
 const { ctrlWrap } = require('./ctrlWrap');
 const { isValidId } = require('./isValidId');
 const { mongooseErrorStatus } = require('./mongooseErrorStatus');
 
 module.exports = {
+	SUBSCRIPTIONS,
 	EMAIL_REGEXP,
 	PHONE_REGEXP,
 	HttpError,

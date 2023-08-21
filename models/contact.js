@@ -1,6 +1,6 @@
 const Joi = require('joi');
 const { Schema, model } = require('mongoose');
-const { mongooseErrorStatus } = require('../utils');
+const { EMAIL_REGEXP, PHONE_REGEXP, mongooseErrorStatus } = require('../utils');
 
 const contactSchema = new Schema({
 	name: {
@@ -10,16 +10,21 @@ const contactSchema = new Schema({
 	email: {
 		type: String,
 		required: true,
-		match: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
+		match: EMAIL_REGEXP,
 	},
 	phone: {
 		type: String,
 		required: true,
-		match: /^\(\d{3}\)\s\d{3}-\d{4}$/, 
+		match: PHONE_REGEXP, 
 	},
 	favorite: {
 		type: Boolean,
 		default: false,
+	},
+	owner: {
+		type: Schema.Types.ObjectId,
+		required: true,
+		ref: 'user',
 	},
 }, {versionKey: false, timestamps: true})
 

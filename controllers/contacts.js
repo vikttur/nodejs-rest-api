@@ -1,5 +1,5 @@
 const { Contact } = require('../models/contact');
-const { HttpError, ctrlWrap } = require('../utils');
+const { HttpError, ctrlWrap, receiveOwner } = require('../utils');
 const { schemas } = require('../models/contact');
 
 const getAll = async (req, res) => {
@@ -12,10 +12,7 @@ const getAll = async (req, res) => {
 }
 
 const getById = async (req, res) => {
-	const { _id: owner } = req.user;
-	const { id } = req.params;
-
-  const contact = await Contact.findOne({ _id: id, owner, }, '-token -createdAt -updatedAt');
+  const contact = await Contact.findOne(receiveOwner(req), '-token -createdAt -updatedAt');
   if (!contact) throw HttpError(404);
       
 	res.json(contact);
@@ -34,9 +31,7 @@ const updateById = async (req, res) => {
 	const { error } = schemas.putSchema.validate(req.body);
 	if (error) throw HttpError(400, 'missing fields');
 
-	const { _id: owner } = req.user;
-	const { id } = req.params;
-	const updateContact = await Contact.findOneAndUpdate({ _id: id, owner, }, req.body, { new: true, });
+	const updateContact = await Contact.findOneAndUpdate(receiveOwner(req), req.body, { new: true, });
 	if (!updateContact) throw HttpError(404);
 	res.json(updateContact);
 }
@@ -45,17 +40,13 @@ const updateStatusContact = async (req, res) => {
 	const { error } = schemas.patchSchema.validate(req.body);
 	if (error) throw HttpError(400, 'missing field favorite');
 
-	const { _id: owner } = req.user;
-	const { id } = req.params;
-	const updateContact = await Contact.findOneAndUpdate({ _id: id, owner, }, req.body, {now: true, });
+	const updateContact = await Contact.findOneAndUpdate(receiveOwner(req), req.body, {now: true, });
 	if (!updateContact) throw HttpError(404);
 	res.json(updateContact);
 }
 
 const deleteById = async (req, res) => {
-	const { _id: owner } = req.user;
-	const { id } = req.params;
-	const deletedContact = await Contact.findOneAndDelete({ _id: id, owner, });
+	const deletedContact = await Contact.findOneAndDelete(receiveOwner(req));
 
 	if (!deletedContact) throw HttpError(404);
 	res.json({ "message": "contact deleted" });

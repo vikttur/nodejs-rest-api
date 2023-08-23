@@ -1,9 +1,14 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const gravatar = require('gravatar');
+const path = require('path');
+const fs = require('fs/promises');
+
 const { User, schemas} = require('../models/user');
 const { SUBSCRIPTIONS, HttpError, ctrlWrap } = require('../utils');
 
 const { SECRET_KEY } = process.env;
+const avatarDir = path.join(__dirname, '..', 'public', 'avatars');
 
 const register = async (req, res) => {
 	const { error } = schemas.signapSchema.validate(req.body);
@@ -14,7 +19,8 @@ const register = async (req, res) => {
 	if (user) throw HttpError(409, 'Email is already in use');
 
 	const hashPassword = await bcrypt.hash(password, 10);
-	const newUser = await User.create({ ...req.body, password: hashPassword });
+	const avatarURL = gravatar.url(email);
+	const newUser = await User.create({ ...req.body, password: hashPassword, avatarURL });
 
 	res.status(201).json({
 		user: {
@@ -84,10 +90,30 @@ const updateSubscription = async (req, res) => {
 	})
 }
 
+const updateAvatar = async (req, res) => {
+	const { _id } = req.user;
+	console.log(req.file);
+	const { path: tempUpload, originalname } = req.file;
+	const resultUpload = path.join(avatarDir, originalname); 
+
+	// console.log(_id);
+	// console.log(avatarDir);
+	// console.log(resultUpload);
+
+	await fs.rename(tempUpload, resultUpload);
+	const avatarURL = path.join('avatars', originalname);
+	await User.findByIdAndUpdate(_id, { avatarURL });
+
+	res.json({
+		avatarURL,
+	})
+}
+
 module.exports = {
 	register: ctrlWrap(register),
 	login: ctrlWrap(login),
 	current: ctrlWrap(current),
 	logout: ctrlWrap(logout),
 	updateSubscription: ctrlWrap(updateSubscription),
+	updateAvatar: ctrlWrap(updateAvatar),
 }

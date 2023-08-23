@@ -4,7 +4,7 @@ const { ctrlWrap } = require('./ctrlWrap');
 const { isValidId } = require('./isValidId');
 const { mongooseErrorStatus } = require('./mongooseErrorStatus');
 const receiveOwner = require('./receiveOwner');
-// const upload = require('./upload');
+const upload = require('./upload');
 
 module.exports = {
 	SUBSCRIPTIONS,
@@ -15,5 +15,5 @@ module.exports = {
 	isValidId,
 	mongooseErrorStatus,
 	receiveOwner,
-	// upload,
+	upload,
 }

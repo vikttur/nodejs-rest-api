@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const gravatar = require('gravatar');
 const path = require('path');
 const fs = require('fs/promises');
+const Jimp = require('jimp');
 
 const { User, schemas} = require('../models/user');
 const { SUBSCRIPTIONS, HttpError, ctrlWrap } = require('../utils');
@@ -92,16 +93,16 @@ const updateSubscription = async (req, res) => {
 
 const updateAvatar = async (req, res) => {
 	const { _id } = req.user;
-	console.log(req.file);
-	const { path: tempUpload, originalname } = req.file;
-	const resultUpload = path.join(avatarDir, originalname); 
-
-	// console.log(_id);
-	// console.log(avatarDir);
-	// console.log(resultUpload);
-
-	await fs.rename(tempUpload, resultUpload);
-	const avatarURL = path.join('avatars', originalname);
+	const { path: tmpUpload, originalname } = req.file;
+	const filename = `${_id}${originalname}`
+	
+	const newAvatarSize = await Jimp.read(tmpUpload);
+	await newAvatarSize.resize(250, 250).writeAsync(tmpUpload);
+	
+	const resultUpload = path.join(avatarDir, filename); 
+	await fs.rename(tmpUpload, resultUpload);
+	
+	const avatarURL = path.join('avatars', filename);
 	await User.findByIdAndUpdate(_id, { avatarURL });
 
 	res.json({

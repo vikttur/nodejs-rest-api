@@ -6,6 +6,8 @@ const { upload } = require('../../utils/upload');
 const router = express.Router();
 
 router.post('/register', ctrlUsers.register);
+router.get('/verify/:verificationToken', ctrlUsers.verifyEmail);
+router.post('/verify', ctrlUsers.resendVerifyEmail);
 router.post('/login', ctrlUsers.login);
 router.get('/current', authenticate, ctrlUsers.current);
 router.post('/logout', authenticate, ctrlUsers.logout);

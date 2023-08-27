@@ -5,6 +5,7 @@ const { isValidId } = require('./isValidId');
 const { mongooseErrorStatus } = require('./mongooseErrorStatus');
 const receiveOwner = require('./receiveOwner');
 const upload = require('./upload');
+const { sendEmail } = require('./sendEmail');
 
 module.exports = {
 	SUBSCRIPTIONS,
@@ -16,4 +17,5 @@ module.exports = {
 	mongooseErrorStatus,
 	receiveOwner,
 	upload,
+	sendEmail,
 }
